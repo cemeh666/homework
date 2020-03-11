@@ -66,6 +66,13 @@ class Data implements Drivers
         $this->course->fieldValue();
         $result = rand(0, 50);
         echo "Result DB {$this->course->cacheKey()}: {$result}\n";
+
+        $result = $result < 20 ? $result : null;
+
+        //если в базе существует значение кладём в кэш
+        if(!is_null($result)){
+            $this->setValueCache($result);
+        }
         return $result < 20 ? $result : null;
     }
 
@@ -75,6 +82,21 @@ class Data implements Drivers
         $this->course->sourceUrl();
         $result = rand(0, 50);
         echo "Result SOURCE {$this->course->cacheKey()}: {$result}\n";
+        $this->setValueCacheAndDB($result);
         return $result;
+    }
+
+    //установка значений в кэш и БД
+    public function setValueCache($value): void {
+        //используем ключ для сохранение в кэш
+        $this->course->cacheKey();
+    }
+
+    //установка значений в кэш и БД
+    public function setValueCacheAndDB($value): void {
+        //используем ключ для сохранение в кэш
+        $this->course->cacheKey();
+        //используем значение для записи в базу
+        $this->course->fieldValue();
     }
 }
