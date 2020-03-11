@@ -73,7 +73,7 @@ class Data implements Drivers
         if(!is_null($result)){
             $this->setValueCache($result);
         }
-        return $result < 20 ? $result : null;
+        return $result;
     }
 
     public function source()
