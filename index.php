@@ -11,11 +11,6 @@ class Context
         $this->course = $course;
     }
 
-    public function setCourse(Courses $course)
-    {
-        $this->course = $course;
-    }
-
     public function getActualCourse()
     {
         return $this->course->getCourse();
@@ -73,15 +68,33 @@ class CourseEUR implements Courses
     }
 }
 
+class Client
+{
+    private $available_courses = [
+        'USD', 'EUR'
+    ];
+
+    public function getCourse(string $course){
+        if(!isset($this->available_courses, $course) || !class_exists("Course".$course)){
+            return "Not available course: $course, \navailable: ".implode(', ', $this->available_courses);
+        }
+        $class_name = "Course".$course;
+        $context = new Context(new $class_name());
+
+        return $context->getActualCourse();
+    }
+
+}
+
 //если бы было больше времени:
-//для удобства можно было обернуть инициализацию в класс с доступными курсами валют
 //обработка исключений, если источник недоступен или кэш или база
+//обработка не поддерживаемых курсов
 
-$context = new Context(new CourseUSD());
+$client = new Client();
 
-echo "\nResult Course USD: ".$context->getActualCourse()."\n\n";
+echo "\nResult Course USD: ".$client->getCourse("USD")."\n\n";
 
-$context->setCourse(new CourseEUR());
+echo "\nResult Course EUR: ".$client->getCourse("EUR")."\n\n";
 
-echo "\nResult Course EUR: ".$context->getActualCourse()."\n\n";
+echo "\nResult Course RUB: ".$client->getCourse("RUB")."\n\n";
 
